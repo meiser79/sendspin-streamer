@@ -1,0 +1,41 @@
+services:
+  sendspin-streamer:
+    build: .
+    image: sendspin-streamer:latest
+    container_name: sendspin-streamer
+    restart: unless-stopped
+
+    # Host network: required so mDNS (_sendspin-server._tcp) can find the server on the LAN.
+    network_mode: host
+
+    environment:
+      NAME: "Sendspin Streamer"
+      # Fixed server address; leave empty to discover via mDNS:
+      # SENDSPIN_SERVER: "192.168.1.10:8927"
+      MDNS: "1"
+      HTTP_PORT: "8000"
+      MP3_BITRATE: "192"
+      BUFFER_MS: "800"
+      VOLUME: "100"
+      # ICY in-stream metadata (StreamTitle); 0 disables it
+      ICY_METAINT: "16000"
+      ICY_DESCRIPTION: "Sendspin Streamer"
+      ICY_GENRE: "Various"
+
+      # Which output formats are served. "all" or a list:
+      # mp3, flac, opus, wav, pcm
+      STREAM_FORMATS: "all"
+      # Format used by /stream and the built-in web player
+      DEFAULT_FORMAT: "mp3"
+
+      PREFERRED_CODEC: "pcm"
+      MAX_SAMPLE_RATE: "48000"
+      MAX_BIT_DEPTH: "16"
+      # Stable client ID across restarts (optional):
+      # CLIENT_ID: "sendspin-streamer-livingroom"
+
+    # Without mDNS a bridge network is enough — then remove network_mode above
+    # and publish the ports instead:
+    # ports:
+    #   - "8000:8000"
+
